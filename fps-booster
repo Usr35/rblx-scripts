@@ -1,0 +1,64 @@
+-- FPS Boost Script: disables heavy visuals to improve performance
+
+-- You can change this
+local ToDisable = {
+    Textures = true,
+    VisualEffects = true,
+    Parts = true,
+    Particles = true,
+    Sky = true
+}
+
+-- And this too
+local ToEnable = {
+    FullBright = false
+}
+
+local DisabledObjects = {}
+
+for _, obj in pairs(game:GetDescendants()) do
+    if ToDisable.Parts and (obj:IsA("Part") or obj:IsA("UnionOperation") or obj:IsA("BasePart")) then
+        obj.Material = Enum.Material.SmoothPlastic
+        table.insert(DisabledObjects, obj)
+    end
+
+    if ToDisable.Particles and (obj:IsA("ParticleEmitter") or obj:IsA("Smoke") or obj:IsA("Explosion") or obj:IsA("Sparkles") or obj:IsA("Fire")) then
+        obj.Enabled = false
+        table.insert(DisabledObjects, obj)
+    end
+
+    if ToDisable.VisualEffects and (obj:IsA("BloomEffect") or obj:IsA("BlurEffect") or obj:IsA("DepthOfFieldEffect") or obj:IsA("SunRaysEffect")) then
+        obj.Enabled = false
+        table.insert(DisabledObjects, obj)
+    end
+
+    if ToDisable.Textures and (obj:IsA("Decal") or obj:IsA("Texture")) then
+        obj.Texture = ""
+        table.insert(DisabledObjects, obj)
+    end
+
+    if ToDisable.Sky and obj:IsA("Sky") then
+        obj.Parent = nil
+        table.insert(DisabledObjects, obj)
+    end
+end
+
+if ToEnable.FullBright then
+    local Lighting = game:GetService("Lighting")
+
+    Lighting.FogColor = Color3.new(1, 1, 1)
+    Lighting.FogEnd = math.huge
+    Lighting.FogStart = math.huge
+    Lighting.Ambient = Color3.new(1, 1, 1)
+    Lighting.Brightness = 5
+    Lighting.ColorShift_Bottom = Color3.new(1, 1, 1)
+    Lighting.ColorShift_Top = Color3.new(1, 1, 1)
+    Lighting.OutdoorAmbient = Color3.new(1, 1, 1)
+    Lighting.Outlines = true
+end
+
+print("Effects Disabler: Successfully disabled "..#DisabledObjects.." assets/effects.")
+
+for setting, value in pairs(ToDisable) do
+    print(setting..": "..tostring(value))
+end
